@@ -1,0 +1,26 @@
+name: Importar copia de pruebas
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconstruir y comprobar el archivo
+        run: |
+          cat site.zip.part-* > /tmp/site.zip
+          unzip -tq /tmp/site.zip
+          unzip -oq /tmp/site.zip -d .
+          rm site.zip.part-*
+          rm .github/workflows/import-site.yml
+      - name: Guardar el juego en el repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publicar copia personal de pruebas"
+          git push
